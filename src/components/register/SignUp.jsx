@@ -19,7 +19,7 @@ const SignUp = () => {
   const onSubmit = (data) => {
     dispatch(setUser(data));
     dispatch(signUp(data.email, data.password, data.displayName));
-    navigate("/video-form");
+    navigate("/video-model");
   };
   return (
     <Container>

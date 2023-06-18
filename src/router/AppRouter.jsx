@@ -13,7 +13,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="video-form" element={<VideoForm />} />
+          <Route path="video-model" element={<VideoForm />} />
           <Route path="video-list" element={<VideoList />} />
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
