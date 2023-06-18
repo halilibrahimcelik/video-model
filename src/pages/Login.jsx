@@ -1,12 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import SignUp from "../components/register/SignUp";
+import SignIn from "../components/register/SignIn";
 const Login = () => {
   const navigate = useNavigate();
-  return (
-    <div>
-      Login <button onClick={() => navigate("/video-form")}>Route</button>{" "}
-    </div>
-  );
+  const isAuthenticated = false;
+  return <>{!isAuthenticated ? <SignUp /> : <SignIn />}</>;
 };
 
 export default Login;
