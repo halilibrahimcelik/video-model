@@ -18,7 +18,7 @@ const SignUp = () => {
   } = useForm();
   const onSubmit = (data) => {
     dispatch(setUser(data));
-
+    dispatch(signUp(data.email, data.password, data.displayName));
     navigate("/video-form");
   };
   return (
@@ -42,9 +42,9 @@ const SignUp = () => {
               type="text"
               defaultValue="test"
               placeholder="Name.."
-              {...register("firstName", { required: true, maxLength: 20 })}
+              {...register("displayName", { required: true, maxLength: 20 })}
             />
-            {errors.firstName && <span>This field is required</span>}
+            {errors.displayName && <span>Bu alan zorunlu</span>}
 
             {/* include validation with required or other standard HTML validation rules */}
             <input
@@ -54,8 +54,17 @@ const SignUp = () => {
               {...register("email", { required: true })}
             />
             {/* errors will return when field validation fails  */}
-            {errors.email && <span>This field is required</span>}
-
+            {errors.email && <span>Bu alan zorunlu</span>}
+            <input
+              className="rounded-sm  py-2  px-1 focus:border-teal-700  focus:outline-none focus:rounded-md border-[3px] border-solid"
+              type="password"
+              placeholder="Password.."
+              {...register("password", { required: true, minLength: 6 })}
+            />
+            {/* errors will return when field validation fails  */}
+            {errors.password && (
+              <span>Lüttfen minimum 6 karater kullanınız.</span>
+            )}
             <input
               className="px-5 py-1 font-bold uppercase border-1 border-solid mt-4  bg-[#e2f1e6] transition-all ease-in duration-300 hover:bg-white  rounded-sm w-fit  self-center cursor-pointer "
               type="submit"
@@ -63,7 +72,7 @@ const SignUp = () => {
           </form>
           <p className="text-white">
             * Çoktan kayıt oldunuz mu?{" "}
-            <Link className="underline" to="/login">
+            <Link className="underline" to="/sign-in">
               Giriş Yapın
             </Link>
           </p>

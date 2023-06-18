@@ -5,6 +5,7 @@ import Login from "../pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import VideoForm from "../pages/VideoForm";
 import VideoList from "../pages/VideoList";
+import SignIn from "../components/register/SignIn";
 
 const AppRouter = () => {
   return (
@@ -15,6 +16,7 @@ const AppRouter = () => {
           <Route path="video-form" element={<VideoForm />} />
           <Route path="video-list" element={<VideoList />} />
         </Route>
+        <Route path="/sign-in" element={<SignIn />} />
       </Routes>
     </BrowserRouter>
   );
