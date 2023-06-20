@@ -3,8 +3,11 @@ import Navbar from "../components/navbar/Navbar";
 import Container from "../components/UI/Container";
 import Dropzone from "react-dropzone-uploader";
 import "react-dropzone-uploader/dist/styles.css";
+import { getDroppedOrSelectedFiles } from "html5-file-selector";
 
 import { useForm } from "react-hook-form";
+import CustomInput from "../components/input/Input";
+import Input from "../components/input/Input";
 
 const VideoForm = () => {
   const {
@@ -16,17 +19,25 @@ const VideoForm = () => {
   const onSubmit = (data) => {
     console.log(data); // Perform any necessary actions with the form data
   };
+  const handleSubmitVideo = (files, allFiles) => {
+    console.log(files.map((f) => f.meta));
+    allFiles.forEach((f) => f.remove());
+  };
+
+  const getFilesFromEvent = (e) => {
+    return new Promise((resolve) => {
+      getDroppedOrSelectedFiles(e).then((chosenFiles) => {
+        resolve(chosenFiles.map((f) => f.fileObject));
+      });
+    });
+  };
+
   const getUploadParams = ({ meta }) => {
     return { url: "https://httpbin.org/post" };
   };
   const handleChangeStatus = ({ meta, file }, status) => {
     console.log(status, meta, file);
   };
-  const handleSubmitFile = (files, allFiles) => {
-    console.log(files.map((f) => f.meta));
-    allFiles.forEach((f) => f.remove());
-  };
-
   return (
     <>
       <Navbar />
@@ -130,12 +141,19 @@ const VideoForm = () => {
                 {errors.platform && <span>This field is required</span>}
               </div>
               <div>
-                <label>Upload Video</label>
-                <Dropzone
+                <label className="text-teal-700 ">Upload Video</label>
+                {/* <Dropzone
                   getUploadParams={getUploadParams}
                   onChangeStatus={handleChangeStatus}
                   onSubmit={handleSubmit}
                   accept="image/*,audio/*,video/*"
+                /> */}
+                <Dropzone
+                  accept="image/*,audio/*,video/*"
+                  getUploadParams={getUploadParams}
+                  onChangeStatus={handleChangeStatus}
+                  InputComponent={Input}
+                  getFilesFromEvent={getFilesFromEvent}
                   {...register("video", { required: true })}
                 />
                 {errors.video && <span>This field is required</span>}
