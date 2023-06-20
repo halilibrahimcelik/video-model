@@ -1,10 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "../../app/auth/authSlicer";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUrl = window.location.pathname;
   const isVideoModel = currentUrl === "/video-model";
   const isVideoList = currentUrl === "/video-list";
+  const handleSignOut = () => {
+    dispatch(signOut());
+    navigate("/");
+  };
   return (
     <nav className=" px-5   mx-auto h-[60px] fixed w-full top-0  bg-gradient-secondary  flex text-white font-bold justify-between items-center">
       <ul className="flex  gap-3">
@@ -36,7 +44,10 @@ const Navbar = () => {
         </li>
       </ul>
 
-      <button className="relative after:absolute after:left-[-12px] after:top-[-18px] after:w-[5px] after:bg-white after:h-[60px] after:content-''">
+      <button
+        onClick={handleSignOut}
+        className="relative after:absolute after:left-[-12px] after:top-[-18px] after:w-[5px] after:bg-white after:h-[60px] after:content-''"
+      >
         Çıkış
       </button>
     </nav>

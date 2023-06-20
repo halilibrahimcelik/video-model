@@ -59,7 +59,7 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
           email: auth.currentUser.email,
           displayName: firstName,
         };
-        dispatch(setUser(auth.currentUser));
+        dispatch(setUser(auth?.currentUser));
       })
       .catch((error) => {
         console.log(error.message);
@@ -73,7 +73,9 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
 export const signIn = (email, password) => async (dispatch) => {
   try {
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-      userCredential.user.displayName && dispatch(setUser(userCredential.user));
+      dispatch(setUser(userCredential.user));
+
+      localStorage.setItem("isLoggedIn", true);
     });
   } catch (error) {
     dispatch(setError(error.message));
@@ -85,6 +87,7 @@ export const signOut = () => async (dispatch) => {
   try {
     await auth.signOut();
     dispatch(signOut());
+    localStorage.removeItem("isLoggedIn");
   } catch (error) {
     dispatch(setError(error.message));
   }
@@ -94,8 +97,8 @@ export const listenToAuthChanges = () => async (dispatch) => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       dispatch(setUser(user));
-    } else {
-      dispatch(signOut());
+      localStorage.setItem("isLoggedIn", true);
+      console.log(user);
     }
     // Set loading state to false after initial check
   });

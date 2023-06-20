@@ -35,7 +35,6 @@ const VideoForm = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
     const storeImage = async (videoData) => {
       return new Promise((resolve, reject) => {
         const nameId = new Date().getTime() + videoData.name;
@@ -114,6 +113,11 @@ const VideoForm = () => {
     if (status === "done") {
       videoFiles.push(file);
     }
+    if (status === "aborted") {
+      alert("Lütfen video yüklemeyi tekrar deneyin.");
+      window.location.reload();
+      return;
+    }
 
     setValue("video", videoFiles);
   };
@@ -139,7 +143,9 @@ const VideoForm = () => {
                   className="w-full  rounded-sm  py-1  px-1 font-medium focus:border-teal-700  focus:outline-none focus:rounded-md border-[2px] border-solid"
                   {...register("title", { required: true })}
                 />
-                {errors.title && <span>This field is required</span>}
+                {errors.title && (
+                  <span>Bu alanın doldurulması zorunludur.</span>
+                )}
               </div>
 
               <div>
@@ -148,9 +154,11 @@ const VideoForm = () => {
                   row={3}
                   col={50}
                   className="w-full  h-[130px]  rounded-sm  py-1  px-1 font-medium focus:border-teal-700  focus:outline-none focus:rounded-md border-[2px] border-solid"
-                  {...register("explanation", { required: true })}
+                  {...register("explanation", { required: false })}
                 />
-                {errors.explanation && <span>This field is required</span>}
+                {errors.explanation && (
+                  <span>Bu alanın doldurulması zorunludur.</span>
+                )}
               </div>
               <div className="flex  flex-col md:flex-row justify-between gap-4">
                 <div className="w-full md:w-[50%]">
@@ -160,7 +168,9 @@ const VideoForm = () => {
                     className="w-full  rounded-sm  py-1  px-1 font-medium focus:border-teal-700  focus:outline-none focus:rounded-md border-[2px] border-solid"
                     {...register("companyName", { required: true })}
                   />
-                  {errors.companyName && <span>This field is required</span>}
+                  {errors.companyName && (
+                    <span>Bu alanın doldurulması zorunludur.</span>
+                  )}
                 </div>
                 <div className=" w-full md:w-[50%]">
                   <label className="text-teal-700">Paylaşılacak Hesap</label>
@@ -169,7 +179,9 @@ const VideoForm = () => {
                     className="w-full  rounded-sm  py-1  px-1 font-medium focus:border-teal-700  focus:outline-none focus:rounded-md border-[2px] border-solid"
                     {...register("accountName", { required: true })}
                   />
-                  {errors.accountName && <span>This field is required</span>}
+                  {errors.accountName && (
+                    <span>Bu alanın doldurulması zorunludur.</span>
+                  )}
                 </div>
               </div>
               <div>
@@ -218,16 +230,13 @@ const VideoForm = () => {
                     Instagram
                   </label>
                 </div>
-                {errors.platform && <span>This field is required</span>}
+                {errors.platform && (
+                  <span>Bu alanın doldurulması zorunludur.</span>
+                )}
               </div>
               <div>
-                <label className="text-teal-700 ">Upload Video</label>
-                {/* <Dropzone
-                  getUploadParams={getUploadParams}
-                  onChangeStatus={handleChangeStatus}
-                  onSubmit={handleSubmit}
-                  accept="image/*,audio/*,video/*"
-                /> */}
+                <label className="text-teal-700 ">Video Yükle</label>
+
                 <Dropzone
                   key={dropzoneKey}
                   classNames="input-video"
@@ -235,13 +244,21 @@ const VideoForm = () => {
                   getUploadParams={getUploadParams}
                   onChangeStatus={handleChangeStatus}
                   InputComponent={Input}
+                  maxSizeBytes={50000000}
                   getFilesFromEvent={getFilesFromEvent}
                   {...register("video", { required: true })}
                 />
-                {errors.video && <span>This field is required</span>}
+                {errors.video && (
+                  <span>Bu alanın doldurulması zorunludur.</span>
+                )}
               </div>
 
-              <button type="submit">Gönder</button>
+              <button
+                className="bg-teal-600 w-fit mx-auto px-3 py-1  text-white  border border-teal-600 rounded-sm transition-all ease-in duration-300 hover:bg-white hover:text-teal-600 font-medium uppercase"
+                type="submit"
+              >
+                Gönder
+              </button>
             </form>
           </fieldset>
         </section>
