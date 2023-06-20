@@ -1,5 +1,3 @@
-import Dropzone from "react-dropzone-uploader";
-
 const Input = ({ accept, onFiles, files, getFilesFromEvent }) => {
   const text =
     files.length > 0

@@ -4,24 +4,83 @@ import Container from "../components/UI/Container";
 import Dropzone from "react-dropzone-uploader";
 import "react-dropzone-uploader/dist/styles.css";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
-
 import { useForm } from "react-hook-form";
-import CustomInput from "../components/input/Input";
 import Input from "../components/input/Input";
+import { doc, setDoc } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { db } from "../firebase/firebase.config";
+import { useSelector } from "react-redux";
+import { selectUserId } from "../app/auth/authSlicer";
 
 const VideoForm = () => {
+  const userId = useSelector(selectUserId);
+  const storage = getStorage();
+  const imagesRef = ref(storage, "videos");
+  const videoFiles = [];
   const {
     register,
+    setValue,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data); // Perform any necessary actions with the form data
-  };
-  const handleSubmitVideo = (files, allFiles) => {
-    console.log(files.map((f) => f.meta));
-    allFiles.forEach((f) => f.remove());
+  const onSubmit = async (data) => {
+    console.log(data);
+    const storeImage = async (videoData) => {
+      return new Promise((resolve, reject) => {
+        const nameId = new Date().getTime() + videoData.name;
+        const storageRef = ref(storage, `video/${nameId}`);
+
+        const uploadTask = uploadBytesResumable(storageRef, videoData);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload is ${progress}% done`);
+            // eslint-disable-next-line default-case
+            switch (snapshot.state) {
+              case "paused":
+                console.log("Upload is paused");
+                break;
+              case "running":
+                console.log("Upload is running");
+                break;
+            }
+          },
+          (error) => {
+            reject(error, "error");
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              resolve(downloadURL);
+            });
+          }
+        );
+      });
+    };
+    const updateVideoUrl = await Promise.all(
+      [...data.video].map((avatar) => storeImage(avatar))
+    ).catch((error) => {
+      console.log(error);
+    });
+    await setDoc(doc(db, "videoList", `videoTitle:${data.title}`), {
+      title: data.title,
+      companyName: data.companyName,
+      explanation: data.explanation,
+      platform: data.platform,
+      accountName: data.accountName,
+      userId,
+      videoUrl: updateVideoUrl,
+    });
+    // Perform any necessary actions with the form data
   };
 
   const getFilesFromEvent = (e) => {
@@ -35,8 +94,16 @@ const VideoForm = () => {
   const getUploadParams = ({ meta }) => {
     return { url: "https://httpbin.org/post" };
   };
+
   const handleChangeStatus = ({ meta, file }, status) => {
-    console.log(status, meta, file);
+    console.log(status, file, meta);
+
+    if (status === "done") {
+      videoFiles.push(file);
+    }
+
+    console.log(videoFiles);
+    setValue("video", videoFiles);
   };
   return (
     <>
@@ -149,7 +216,7 @@ const VideoForm = () => {
                   accept="image/*,audio/*,video/*"
                 /> */}
                 <Dropzone
-                  accept="image/*,audio/*,video/*"
+                  accept="video/*,image/*,audio/*"
                   getUploadParams={getUploadParams}
                   onChangeStatus={handleChangeStatus}
                   InputComponent={Input}

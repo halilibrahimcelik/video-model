@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const currentUrl = window.location.pathname;
-  console.log(currentUrl);
   const isVideoModel = currentUrl === "/video-model";
   const isVideoList = currentUrl === "/video-list";
   return (

@@ -55,13 +55,11 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
           email: auth.currentUser.email,
           displayName: firstName,
         };
-        console.log(user);
         dispatch(setUser(auth.currentUser));
       })
       .catch((error) => {
         console.log(error.message);
       });
-    console.log(userCredential);
   } catch (error) {
     dispatch(setError(error.message));
     console.log(error);
@@ -71,7 +69,6 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
 export const signIn = (email, password) => async (dispatch) => {
   try {
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-      console.log(userCredential);
       userCredential.user.displayName && dispatch(setUser(userCredential.user));
     });
   } catch (error) {
@@ -104,6 +101,7 @@ export const { setUser, setError } = authSlice.actions;
 
 // Selector
 export const selectUser = (state) => state.auth.user;
+export const selectUserId = (state) => state.auth.userId;
 
 // Reducer
 export default authSlice.reducer;

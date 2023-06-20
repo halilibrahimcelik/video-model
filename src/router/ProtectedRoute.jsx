@@ -5,7 +5,6 @@ import { selectUser } from "../app/auth/authSlicer";
 
 const ProtectedRoute = () => {
   const isAuthenticated = useSelector(selectUser);
-  console.log(isAuthenticated, "22");
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 };
