@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/navbar/Navbar";
 import Container from "../components/UI/Container";
 import Dropzone from "react-dropzone-uploader";
@@ -20,13 +20,17 @@ import { selectUserId } from "../app/auth/authSlicer";
 const VideoForm = () => {
   const userId = useSelector(selectUserId);
   const storage = getStorage();
-  const imagesRef = ref(storage, "videos");
+
   const videoFiles = [];
+  const [uploaded, setUploaded] = useState(false);
+
+  const [dropzoneKey, setDropzoneKey] = useState(Date.now());
   const {
     register,
     setValue,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -70,7 +74,12 @@ const VideoForm = () => {
       [...data.video].map((avatar) => storeImage(avatar))
     ).catch((error) => {
       console.log(error);
+      setUploaded(false);
     });
+    if (updateVideoUrl) {
+      setUploaded(true);
+    }
+
     await setDoc(doc(db, "videoList", `videoTitle:${data.title}`), {
       title: data.title,
       companyName: data.companyName,
@@ -81,11 +90,15 @@ const VideoForm = () => {
       videoUrl: updateVideoUrl,
     });
     // Perform any necessary actions with the form data
+    reset();
+
+    setDropzoneKey(Date.now());
   };
 
   const getFilesFromEvent = (e) => {
     return new Promise((resolve) => {
       getDroppedOrSelectedFiles(e).then((chosenFiles) => {
+        console.log(e, "test");
         resolve(chosenFiles.map((f) => f.fileObject));
       });
     });
@@ -102,9 +115,9 @@ const VideoForm = () => {
       videoFiles.push(file);
     }
 
-    console.log(videoFiles);
     setValue("video", videoFiles);
   };
+
   return (
     <>
       <Navbar />
@@ -216,6 +229,8 @@ const VideoForm = () => {
                   accept="image/*,audio/*,video/*"
                 /> */}
                 <Dropzone
+                  key={dropzoneKey}
+                  classNames="input-video"
                   accept="video/*,image/*,audio/*"
                   getUploadParams={getUploadParams}
                   onChangeStatus={handleChangeStatus}

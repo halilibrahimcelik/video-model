@@ -13,6 +13,7 @@ const initialState = {
   error: null,
   email: null,
   userId: null,
+  uploaded: false,
 };
 
 // Slice
@@ -33,6 +34,9 @@ const authSlice = createSlice({
     signOut: (state) => {
       state.user = null;
       state.error = null;
+    },
+    setUploadFile: (state, action) => {
+      state.uploaded = action.payload.uploaded;
     },
   },
 });
@@ -97,11 +101,12 @@ export const listenToAuthChanges = () => async (dispatch) => {
   });
 };
 // Actions
-export const { setUser, setError } = authSlice.actions;
+export const { setUser, setError, setUploadFile } = authSlice.actions;
 
 // Selector
 export const selectUser = (state) => state.auth.user;
 export const selectUserId = (state) => state.auth.userId;
+export const selectUploaded = (state) => state.auth.uploaded;
 
 // Reducer
 export default authSlice.reducer;
