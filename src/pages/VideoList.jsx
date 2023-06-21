@@ -19,7 +19,6 @@ const VideoList = () => {
     onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
-          console.log(user);
           const listingRef = collection(db, "videoList");
           const queryRef = query(
             listingRef,
@@ -38,7 +37,6 @@ const VideoList = () => {
       }
     });
   }, []);
-  console.log(listing);
   const handleVideoClick = (videoId) => {
     setVideoId(videoId);
     setIsOpen(true);
