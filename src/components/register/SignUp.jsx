@@ -5,7 +5,7 @@ import Container from "../UI/Container";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, setUser, signUp } from "../../app/auth/authSlicer";
-
+import { motion } from "framer-motion";
 const SignUp = () => {
   const dispatch = useDispatch();
   const isUserLoggedIn = useSelector(selectUser);
@@ -26,7 +26,13 @@ const SignUp = () => {
   };
   return (
     <Container>
-      <div className="flex justify-center items-center w-full h-screen flex-col ">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 1, staggerChildren: 0.5 }}
+        className="flex justify-center items-center w-full h-screen flex-col "
+      >
         <div className="bg-gradient-primary p-10 rounded-md grid gap-4">
           <h1 className="text-3xl text-center text-white">
             Video-Model App
@@ -80,7 +86,7 @@ const SignUp = () => {
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
     </Container>
   );
 };

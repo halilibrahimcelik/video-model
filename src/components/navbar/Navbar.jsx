@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "../../app/auth/authSlicer";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,13 @@ const Navbar = () => {
     navigate("/");
   };
   return (
-    <nav className=" px-5   mx-auto h-[60px] fixed w-full top-0  bg-gradient-secondary  flex text-white font-bold justify-between items-center">
+    <motion.nav
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 1, staggerChildren: 0.5 }}
+      className=" px-5   mx-auto h-[60px] fixed w-full top-0 z-40  bg-gradient-secondary  flex text-white font-bold justify-between items-center"
+    >
       <ul className="flex  gap-3">
         <li>
           {" "}
@@ -51,7 +58,7 @@ const Navbar = () => {
       >
         Çıkış
       </button>
-    </nav>
+    </motion.nav>
   );
 };
 

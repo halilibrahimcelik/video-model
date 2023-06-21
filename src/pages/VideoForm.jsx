@@ -17,7 +17,7 @@ import { db } from "../firebase/firebase.config";
 import { useSelector } from "react-redux";
 import { selectUserId } from "../app/auth/authSlicer";
 import { toast } from "react-toastify";
-
+import { motion } from "framer-motion";
 const VideoForm = () => {
   const userId = useSelector(selectUserId);
   const storage = getStorage();
@@ -154,10 +154,6 @@ const VideoForm = () => {
     });
   };
 
-  // const getUploadParams = ({ meta }) => {
-  //   return { url: "https://httpbin.org/post" };
-  // };
-
   const handleChangeStatus = ({ meta, file }, status) => {
     console.log(status, file, meta);
 
@@ -175,7 +171,13 @@ const VideoForm = () => {
       <Navbar />
 
       <Container>
-        <section className="py-[100px] ">
+        <motion.section
+          initial={{ translateY: 300, opacity: 0 }}
+          whileInView={{ translateY: 0, opacity: 1 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 1, staggerChildren: 0.5 }}
+          className="py-[100px] "
+        >
           <fieldset className=" max-w-5xl mx-auto border-teal-700 border-[2px] bg-white rounded-md p-3">
             <legend className="text-teal-700  px-1 text-3xl">
               Video Model
@@ -309,7 +311,7 @@ const VideoForm = () => {
               </button>
             </form>
           </fieldset>
-        </section>
+        </motion.section>
       </Container>
     </>
   );

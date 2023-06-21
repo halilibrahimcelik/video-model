@@ -19,7 +19,7 @@ const AppRouter = () => {
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
       </Routes>
-      <ToastContainer />
+      <ToastContainer limit={3} />
     </BrowserRouter>
   );
 };

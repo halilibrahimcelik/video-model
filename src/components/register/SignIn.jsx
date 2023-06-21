@@ -5,7 +5,8 @@ import Container from "../UI/Container";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signIn } from "../../app/auth/authSlicer";
-
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,13 +18,30 @@ const SignIn = () => {
   } = useForm();
   const onSubmit = (data) => {
     dispatch(signIn(data.email, data.password));
+    toast.success("Giriş başarılı", {
+      position: "top-left",
+      autoClose: 2000,
+      className: "mt-20",
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     setTimeout(() => {
       navigate("/video-model");
-    }, 900);
+    }, 1000);
   };
   return (
     <Container>
-      <div className="flex justify-center items-center w-full h-screen flex-col ">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 1, staggerChildren: 0.5 }}
+        className="flex justify-center items-center w-full h-screen flex-col "
+      >
         <div className="bg-gradient-primary p-10 rounded-md grid gap-4">
           <h1 className="text-3xl text-center text-white">
             Video-Model App
@@ -68,7 +86,7 @@ const SignIn = () => {
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
     </Container>
   );
 };
