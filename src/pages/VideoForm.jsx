@@ -16,10 +16,12 @@ import {
 import { db } from "../firebase/firebase.config";
 import { useSelector } from "react-redux";
 import { selectUserId } from "../app/auth/authSlicer";
+import { toast } from "react-toastify";
 
 const VideoForm = () => {
   const userId = useSelector(selectUserId);
   const storage = getStorage();
+  const randomId = Math.random().toString(36).substring(2);
 
   const videoFiles = [];
   const [uploaded, setUploaded] = useState(false);
@@ -35,6 +37,8 @@ const VideoForm = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    const toastId = toast.info("Upload in progress...", { autoClose: false });
+
     const storeImage = async (videoData) => {
       return new Promise((resolve, reject) => {
         const nameId = new Date().getTime() + videoData.name;
@@ -47,22 +51,66 @@ const VideoForm = () => {
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log(`Upload is ${progress}% done`);
+            toast.update(toastId, {
+              render: `Upload is ${parseInt(progress.toFixed(2))}% done`,
+              position: "top-left",
+              autoClose: false,
+              className: "mt-20",
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+            if (progress === 100) {
+              // Close the toast message
+              toast.dismiss(toastId);
+            }
             // eslint-disable-next-line default-case
             switch (snapshot.state) {
               case "paused":
-                console.log("Upload is paused");
+                //  console.log("Upload is paused");
                 break;
               case "running":
-                console.log("Upload is running");
+                //console.log("Upload is running");
                 break;
             }
           },
           (error) => {
             reject(error, "error");
+            toast.warning(
+              "Yükleme sırasında bir sorunla karşılaştık tekrar deneyiniz",
+              {
+                position: "top-left",
+                autoClose: false,
+                className: "mt-20",
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              }
+            );
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              toast.success(
+                "Yükleme başarılı bir şekilde gerçekleştirilmiştir.",
+                {
+                  position: "top-left",
+                  autoClose: 1200,
+                  className: "mt-20",
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                }
+              );
+
               resolve(downloadURL);
             });
           }
@@ -79,7 +127,7 @@ const VideoForm = () => {
       setUploaded(true);
     }
 
-    await setDoc(doc(db, "videoList", `videoTitle:${data.title}`), {
+    await setDoc(doc(db, "videoList", randomId), {
       title: data.title,
       companyName: data.companyName,
       explanation: data.explanation,
@@ -103,20 +151,15 @@ const VideoForm = () => {
     });
   };
 
-  const getUploadParams = ({ meta }) => {
-    return { url: "https://httpbin.org/post" };
-  };
+  // const getUploadParams = ({ meta }) => {
+  //   return { url: "https://httpbin.org/post" };
+  // };
 
   const handleChangeStatus = ({ meta, file }, status) => {
     console.log(status, file, meta);
 
     if (status === "done") {
       videoFiles.push(file);
-    }
-    if (status === "aborted") {
-      alert("Lütfen video yüklemeyi tekrar deneyin.");
-      window.location.reload();
-      return;
     }
 
     setValue("video", videoFiles);
@@ -241,7 +284,7 @@ const VideoForm = () => {
                   key={dropzoneKey}
                   classNames="input-video"
                   accept="video/*,image/*,audio/*"
-                  getUploadParams={getUploadParams}
+                  //  getUploadParams={getUploadParams}
                   onChangeStatus={handleChangeStatus}
                   InputComponent={Input}
                   maxSizeBytes={50000000}

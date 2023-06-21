@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import { toast } from "react-toastify";
 const storedAuthData = localStorage.getItem("isUserLoggedIn");
 // Initial state
 const initialState = {
@@ -60,6 +61,7 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
       displayName: firstName,
     };
     dispatch(setUser(updatedUser));
+    localStorage.setItem("isLoggedIn", true);
     // .then(() => {
     //   // Profile updated!
     //   const user = {
@@ -74,6 +76,17 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
     // });
   } catch (error) {
     dispatch(setError(error.message));
+    toast.error(error.message, {
+      position: "top-right",
+      autoClose: 1200,
+      className: "mt-20",
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     console.log(error);
   }
 };

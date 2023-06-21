@@ -6,6 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import VideoForm from "../pages/VideoForm";
 import VideoList from "../pages/VideoList";
 import SignIn from "../components/register/SignIn";
+import { ToastContainer } from "react-toastify";
 
 const AppRouter = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter = () => {
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
       </Routes>
+      <ToastContainer />
     </BrowserRouter>
   );
 };
