@@ -62,18 +62,6 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
     };
     dispatch(setUser(updatedUser));
     localStorage.setItem("isLoggedIn", true);
-    // .then(() => {
-    //   // Profile updated!
-    //   const user = {
-    //     userId: auth.currentUser.uid,
-    //     email: auth.currentUser.email,
-    //     displayName: firstName,
-    //   };
-    //   dispatch(setUser(auth?.currentUser));
-    // })
-    // .catch((error) => {
-    //   console.log(error.message);
-    // });
   } catch (error) {
     dispatch(setError(error.message));
     toast.error(error.message, {
@@ -98,13 +86,7 @@ export const signIn = (email, password) => async (dispatch) => {
       email,
       password
     );
-    //  .then((userCredential) => {
-    //   console.log(userCredential.user);
-    //   if (userCredential.user) {
-    //     localStorage.setItem("isLoggedIn", true);
-    //   }
-    //   dispatch(setUser(userCredential.user));
-    // });
+
     if (userCredential.user) {
       localStorage.setItem("isLoggedIn", true);
       dispatch(setUser(userCredential.user));
