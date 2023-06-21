@@ -8,11 +8,13 @@ import "react-modal-video/scss/modal-video.scss"; // Import the default CSS
 import ModalVideo from "react-modal-video";
 import { useForm } from "react-hook-form";
 import { CiEdit } from "react-icons/ci";
+import ListForm from "../components/listForm/ListForm";
 
 const VideoList = () => {
   const [listing, setListing] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [videoId, setVideoId] = useState("");
+
   useEffect(() => {
     const videoList = [];
     onAuthStateChanged(auth, async (user) => {
@@ -42,9 +44,7 @@ const VideoList = () => {
     setVideoId(videoId);
     setIsOpen(true);
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
+
   return (
     <>
       <Navbar />
@@ -57,9 +57,9 @@ const VideoList = () => {
               VİDEO LİSTEM
             </legend>
 
-            <div className="videoList-container  ">
+            <div className="videoList-container  flex flex-col gap-10 ">
               {listing.map((item, index) => {
-                return index === 0 ? (
+                return (
                   <div
                     key={item?.listId}
                     className="videoList-wrapper flex flex-col md:flex-row gap-3 justify-between"
@@ -86,7 +86,7 @@ const VideoList = () => {
                       ))}
                     </div>
                     <div className="content-side w-full md:border-l-2  pl-2 ">
-                      <form
+                      {/* <form
                         onSubmit={handleSubmit}
                         className="flex flex-col gap-4"
                       >
@@ -150,6 +150,7 @@ const VideoList = () => {
                             id="title"
                             className="bg-transparentmax-w-full rounded-md w-full p-2  font-medium text-[1.2rem] focus:border-teal-700  focus:outline-none focus:rounded-md border-[3px] border-solid "
                             defaultValue={item.title}
+                            
                           />
                         </div>
                         <div className="flex w-full">
@@ -172,11 +173,10 @@ const VideoList = () => {
                         >
                           DEĞİŞTİR
                         </button>
-                      </form>
+                      </form> */}
+                      <ListForm key={item.listId} item={item} />
                     </div>
                   </div>
-                ) : (
-                  false
                 );
               })}
             </div>

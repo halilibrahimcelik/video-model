@@ -4,7 +4,7 @@ import Container from "../components/UI/Container";
 import Dropzone from "react-dropzone-uploader";
 import "react-dropzone-uploader/dist/styles.css";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Input from "../components/input/Input";
 import { doc, setDoc } from "firebase/firestore";
 import {
