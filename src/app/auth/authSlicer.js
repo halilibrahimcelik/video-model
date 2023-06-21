@@ -92,7 +92,6 @@ export const signIn = (email, password) => async (dispatch) => {
     //   }
     //   dispatch(setUser(userCredential.user));
     // });
-    console.log(userCredential.user);
     if (userCredential.user) {
       localStorage.setItem("isLoggedIn", true);
       dispatch(setUser(userCredential.user));
