@@ -4,8 +4,12 @@ import SignUp from "../components/register/SignUp";
 import SignIn from "../components/register/SignIn";
 const Login = () => {
   const navigate = useNavigate();
-  const isAuthenticated = false;
-  return <>{!isAuthenticated ? <SignUp /> : <SignIn />}</>;
+
+  return (
+    <>
+      <SignUp />
+    </>
+  );
 };
 
 export default Login;

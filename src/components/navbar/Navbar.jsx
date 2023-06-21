@@ -11,6 +11,7 @@ const Navbar = () => {
   const isVideoList = currentUrl === "/video-list";
   const handleSignOut = () => {
     dispatch(signOut());
+    localStorage.removeItem("isLoggedIn");
     navigate("/");
   };
   return (

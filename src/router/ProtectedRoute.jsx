@@ -4,9 +4,11 @@ import { useSelector } from "react-redux";
 import { selectUser, selectUserId } from "../app/auth/authSlicer";
 
 const ProtectedRoute = () => {
+  const userID = useSelector(selectUserId);
+
   const isAuthenticated =
-    useSelector(selectUserId) || JSON.parse(localStorage.getItem("isLoggedIn"));
-  console.log(isAuthenticated);
+    JSON.parse(localStorage.getItem("isLoggedIn")) || userID;
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 };
 

@@ -6,13 +6,15 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-
+const storedAuthData = localStorage.getItem("isUserLoggedIn");
 // Initial state
 const initialState = {
   user: null,
   error: null,
   email: null,
-  userId: null,
+  userId: storedAuthData
+    ? JSON.parse(localStorage.getItem("isUserLoggedIn"))
+    : null,
   uploaded: false,
 };
 
@@ -49,21 +51,27 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
       email,
       password
     );
-    updateProfile(auth.currentUser, {
+    await updateProfile(userCredential.user, {
       displayName: firstName,
-    })
-      .then(() => {
-        // Profile updated!
-        const user = {
-          userId: auth.currentUser.uid,
-          email: auth.currentUser.email,
-          displayName: firstName,
-        };
-        dispatch(setUser(auth?.currentUser));
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    });
+    const updatedUser = {
+      userId: userCredential.user.uid,
+      email: userCredential.user.email,
+      displayName: firstName,
+    };
+    dispatch(setUser(updatedUser));
+    // .then(() => {
+    //   // Profile updated!
+    //   const user = {
+    //     userId: auth.currentUser.uid,
+    //     email: auth.currentUser.email,
+    //     displayName: firstName,
+    //   };
+    //   dispatch(setUser(auth?.currentUser));
+    // })
+    // .catch((error) => {
+    //   console.log(error.message);
+    // });
   } catch (error) {
     dispatch(setError(error.message));
     console.log(error);
@@ -72,11 +80,23 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
 
 export const signIn = (email, password) => async (dispatch) => {
   try {
-    signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-      dispatch(setUser(userCredential.user));
-
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    //  .then((userCredential) => {
+    //   console.log(userCredential.user);
+    //   if (userCredential.user) {
+    //     localStorage.setItem("isLoggedIn", true);
+    //   }
+    //   dispatch(setUser(userCredential.user));
+    // });
+    console.log(userCredential.user);
+    if (userCredential.user) {
       localStorage.setItem("isLoggedIn", true);
-    });
+      dispatch(setUser(userCredential.user));
+    }
   } catch (error) {
     dispatch(setError(error.message));
     console.log(error.message);
@@ -87,7 +107,6 @@ export const signOut = () => async (dispatch) => {
   try {
     await auth.signOut();
     dispatch(signOut());
-    localStorage.removeItem("isLoggedIn");
   } catch (error) {
     dispatch(setError(error.message));
   }
@@ -98,7 +117,6 @@ export const listenToAuthChanges = () => async (dispatch) => {
     if (user) {
       dispatch(setUser(user));
       localStorage.setItem("isLoggedIn", true);
-      console.log(user);
     }
     // Set loading state to false after initial check
   });

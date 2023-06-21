@@ -19,7 +19,10 @@ const SignUp = () => {
   const onSubmit = (data) => {
     dispatch(setUser(data));
     dispatch(signUp(data.email, data.password, data.displayName));
-    navigate("/video-model");
+    localStorage.setItem("isLoggedIn", true);
+    setTimeout(() => {
+      navigate("/video-model");
+    }, 900);
   };
   return (
     <Container>

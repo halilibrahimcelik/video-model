@@ -17,7 +17,9 @@ const SignIn = () => {
   } = useForm();
   const onSubmit = (data) => {
     dispatch(signIn(data.email, data.password));
-    navigate("/video-model");
+    setTimeout(() => {
+      navigate("/video-model");
+    }, 900);
   };
   return (
     <Container>
