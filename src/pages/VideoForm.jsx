@@ -4,7 +4,7 @@ import Container from "../components/UI/Container";
 import Dropzone from "react-dropzone-uploader";
 import "react-dropzone-uploader/dist/styles.css";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import Input from "../components/input/Input";
 import { doc, setDoc } from "firebase/firestore";
 import {
@@ -24,6 +24,7 @@ const VideoForm = () => {
   const randomId = Math.random().toString(36).substring(2);
 
   const videoFiles = [];
+  const videoFileName = [];
   const [uploaded, setUploaded] = useState(false);
 
   const [dropzoneKey, setDropzoneKey] = useState(Date.now());
@@ -135,6 +136,8 @@ const VideoForm = () => {
       accountName: data.accountName,
       userId,
       videoUrl: updateVideoUrl,
+      listId: randomId,
+      videoFileName: data.videoName,
     });
     // Perform any necessary actions with the form data
     reset();
@@ -160,9 +163,11 @@ const VideoForm = () => {
 
     if (status === "done") {
       videoFiles.push(file);
+      videoFileName.push(file.name);
     }
 
     setValue("video", videoFiles);
+    setValue("videoName", videoFileName);
   };
 
   return (
