@@ -13,11 +13,12 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { db } from "../firebase/firebase.config";
+import { auth, db } from "../firebase/firebase.config";
 import { useSelector } from "react-redux";
 import { selectUserId } from "../app/auth/authSlicer";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { onAuthStateChanged } from "firebase/auth";
 const VideoForm = () => {
   const userId = useSelector(selectUserId);
   const storage = getStorage();
@@ -127,18 +128,23 @@ const VideoForm = () => {
     if (updateVideoUrl) {
       setUploaded(true);
     }
-
-    await setDoc(doc(db, "videoList", randomId), {
-      title: data.title,
-      companyName: data.companyName,
-      explanation: data.explanation,
-      platform: data.platform,
-      accountName: data.accountName,
-      userId,
-      videoUrl: updateVideoUrl,
-      listId: randomId,
-      videoFileName: data.videoName,
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await setDoc(doc(db, "videoList", randomId), {
+          title: data.title,
+          companyName: data.companyName,
+          explanation: data.explanation,
+          platform: data.platform,
+          accountName: data.accountName,
+          userId: user.uid,
+          videoUrl: updateVideoUrl,
+          listId: randomId,
+          videoFileName: data?.videoName,
+        });
+      }
+      // Set loading state to false after initial check
     });
+
     // Perform any necessary actions with the form data
     reset();
 
