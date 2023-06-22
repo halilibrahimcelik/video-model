@@ -23,7 +23,6 @@ const VideoForm = () => {
   const userId = useSelector(selectUserId);
   const storage = getStorage();
   const randomId = Math.random().toString(36).substring(2);
-
   const videoFiles = [];
   const videoFileName = [];
   const [uploaded, setUploaded] = useState(false);
@@ -33,7 +32,7 @@ const VideoForm = () => {
     register,
     setValue,
     handleSubmit,
-    getValues,
+
     reset,
     formState: { errors },
   } = useForm();
@@ -137,7 +136,7 @@ const VideoForm = () => {
           explanation: data.explanation,
           platform: data.platform,
           accountName: data.accountName,
-          userId: user.uid,
+          userId: userId || user.uid,
           videoUrl: updateVideoUrl,
           listId: randomId,
           videoFileName: data?.videoName,

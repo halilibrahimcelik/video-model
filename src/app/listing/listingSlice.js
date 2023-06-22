@@ -8,7 +8,7 @@ const listingSlice = createSlice({
   initialState,
   reducers: {
     setListings: (state, action) => {
-      state.listings = action.payload;
+      state.listings = state.listings.push(action.payload);
     },
   },
 });

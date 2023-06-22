@@ -19,7 +19,7 @@ import { motion } from "framer-motion";
 import { InfinitySpin } from "react-loader-spinner";
 import { MdFolderDelete } from "react-icons/md";
 import { toast } from "react-toastify";
-import { set } from "react-hook-form";
+
 const VideoList = () => {
   const [listing, setListing] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +44,7 @@ const VideoList = () => {
           querySnapshot.forEach((doc) => {
             if (doc.exists()) {
               videoList.push(doc.data());
-              console.log();
+              console.log("");
               setListing(videoList);
               setLoading(false);
             }
