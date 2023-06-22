@@ -33,6 +33,7 @@ const authSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
       state.user = null;
+      state.userId = null;
     },
     signOut: (state) => {
       state.user = null;
@@ -90,6 +91,17 @@ export const signIn = (email, password) => async (dispatch) => {
     if (userCredential.user) {
       localStorage.setItem("isLoggedIn", true);
       dispatch(setUser(userCredential.user));
+      toast.success("Giriş başarılı", {
+        position: "top-left",
+        autoClose: 2000,
+        className: "mt-20",
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   } catch (error) {
     dispatch(setError(error.message));

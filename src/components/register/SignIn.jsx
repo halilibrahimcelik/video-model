@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signIn } from "../../app/auth/authSlicer";
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
 const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,17 +17,7 @@ const SignIn = () => {
   } = useForm();
   const onSubmit = (data) => {
     dispatch(signIn(data.email, data.password));
-    toast.success("Giriş başarılı", {
-      position: "top-left",
-      autoClose: 2000,
-      className: "mt-20",
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
+
     setTimeout(() => {
       navigate("/video-model");
     }, 1000);

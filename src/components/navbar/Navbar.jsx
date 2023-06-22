@@ -13,7 +13,9 @@ const Navbar = () => {
   const handleSignOut = () => {
     dispatch(signOut());
     localStorage.removeItem("isLoggedIn");
-    navigate("/");
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
   };
   return (
     <motion.nav

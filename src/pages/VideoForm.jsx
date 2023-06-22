@@ -148,18 +148,43 @@ const VideoForm = () => {
   const getFilesFromEvent = (e) => {
     return new Promise((resolve) => {
       getDroppedOrSelectedFiles(e).then((chosenFiles) => {
-        console.log(e, "test");
         resolve(chosenFiles.map((f) => f.fileObject));
       });
     });
   };
 
   const handleChangeStatus = ({ meta, file }, status) => {
-    console.log(status, file, meta);
+    //console.log(status, file, meta);
 
     if (status === "done") {
       videoFiles.push(file);
       videoFileName.push(file.name);
+    }
+    if (status === "rejected_file_type") {
+      toast.warning("Lütfen video formatında dosya yükleyiniz", {
+        position: "top-right",
+        autoClose: 1200,
+        className: "mt-20",
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+    if (status === "error_file_size") {
+      toast.warning("Lütfen  yüklenecek video boyutu 20 MB'yi geçmemelidir.", {
+        position: "top-right",
+        autoClose: 2000,
+        className: "mt-20",
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
 
     setValue("video", videoFiles);
@@ -290,11 +315,11 @@ const VideoForm = () => {
                 <Dropzone
                   key={dropzoneKey}
                   classNames="input-video"
-                  accept="video/*,image/*,audio/*"
+                  accept="video/*"
                   //  getUploadParams={getUploadParams}
                   onChangeStatus={handleChangeStatus}
                   InputComponent={Input}
-                  maxSizeBytes={50000000}
+                  maxSizeBytes={20000000}
                   getFilesFromEvent={getFilesFromEvent}
                   {...register("video", { required: true })}
                 />

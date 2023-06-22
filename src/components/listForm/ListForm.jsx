@@ -62,7 +62,7 @@ const ListForm = ({ item }) => {
         value={item.listId}
         {...register("itemId")}
       />
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-col gap-2">
         <div className="flex w-full">
           <label
             className="text-teal-700 inline-block whitespace-nowrap  mr-2 text-[1.2rem] font-medium "
@@ -75,7 +75,7 @@ const ListForm = ({ item }) => {
             value={item.accountName}
             {...register("accountName")}
             readOnly
-            className="bg-transparent w-full border-none font-medium text-[1.2rem] outline-none cursor-default capitalize"
+            className="bg-transparent w-full border-none font-medium text-[1.2rem] outline-none cursor-default "
           />
         </div>
         <div className="flex w-full">
