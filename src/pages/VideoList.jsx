@@ -44,6 +44,7 @@ const VideoList = () => {
           querySnapshot.forEach((doc) => {
             if (doc.exists()) {
               videoList.push(doc.data());
+              console.log(doc.data());
               setListing(videoList);
               setLoading(false);
             }
@@ -55,6 +56,7 @@ const VideoList = () => {
       }
     });
   }, []);
+  console.log(listing);
   const handleVideoClick = (videoId) => {
     setVideoId(videoId);
     setIsOpen(true);

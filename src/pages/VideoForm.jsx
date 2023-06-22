@@ -130,7 +130,8 @@ const VideoForm = () => {
     }
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        await setDoc(doc(db, "videoList", randomId), {
+        console.log(" succesfully added data! ");
+        const dataObject = {
           title: data.title,
           companyName: data.companyName,
           explanation: data.explanation,
@@ -140,7 +141,9 @@ const VideoForm = () => {
           videoUrl: updateVideoUrl,
           listId: randomId,
           videoFileName: data?.videoName,
-        });
+        };
+
+        await setDoc(doc(db, "videoList", randomId), dataObject);
       }
       // Set loading state to false after initial check
     });
