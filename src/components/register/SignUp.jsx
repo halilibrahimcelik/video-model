@@ -51,8 +51,7 @@ const SignUp = () => {
             <input
               className="rounded-sm  py-2  px-1 focus:border-teal-700  focus:outline-none focus:rounded-md border-[3px] border-solid"
               type="text"
-              defaultValue="test"
-              placeholder="Name.."
+              placeholder="İsim.."
               {...register("displayName", { required: true, maxLength: 20 })}
             />
             {errors.displayName && <span>Bu alan zorunlu</span>}
