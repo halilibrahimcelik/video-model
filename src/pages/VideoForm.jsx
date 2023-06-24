@@ -14,13 +14,16 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { auth, db } from "../firebase/firebase.config";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectUserId } from "../app/auth/authSlicer";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { onAuthStateChanged } from "firebase/auth";
+import { selectListings, setListings } from "../app/listing/listingSlice";
 const VideoForm = () => {
   const userId = useSelector(selectUserId);
+  const dispatch = useDispatch();
+
   const storage = getStorage();
   const randomId = Math.random().toString(36).substring(2);
   const videoFiles = [];
@@ -38,51 +41,23 @@ const VideoForm = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const toastId = toast.info("Upload in progress...", { autoClose: false });
+    try {
+      const toastId = toast.info("Upload in progress...", { autoClose: false });
 
-    const storeImage = async (videoData) => {
-      return new Promise((resolve, reject) => {
-        const nameId = new Date().getTime() + videoData.name;
-        const storageRef = ref(storage, `video/${nameId}`);
+      const storeImage = async (videoData) => {
+        return new Promise((resolve, reject) => {
+          const nameId = new Date().getTime() + videoData.name;
+          const storageRef = ref(storage, `video/${nameId}`);
 
-        const uploadTask = uploadBytesResumable(storageRef, videoData);
+          const uploadTask = uploadBytesResumable(storageRef, videoData);
 
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            toast.update(toastId, {
-              render: `Upload is ${parseInt(progress.toFixed(2))}% done`,
-              position: "top-left",
-              autoClose: false,
-              className: "mt-20",
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            });
-            if (progress === 100) {
-              // Close the toast message
-              toast.dismiss(toastId);
-            }
-            // eslint-disable-next-line default-case
-            switch (snapshot.state) {
-              case "paused":
-                //  console.log("Upload is paused");
-                break;
-              case "running":
-                //console.log("Upload is running");
-                break;
-            }
-          },
-          (error) => {
-            reject(error, "error");
-            toast.warning(
-              "Yükleme sırasında bir sorunla karşılaştık tekrar deneyiniz",
-              {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              toast.update(toastId, {
+                render: `Upload is ${parseInt(progress.toFixed(2))}% done`,
                 position: "top-left",
                 autoClose: false,
                 className: "mt-20",
@@ -92,16 +67,28 @@ const VideoForm = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "light",
+              });
+              if (progress === 100) {
+                // Close the toast message
+                toast.dismiss(toastId);
               }
-            );
-          },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              toast.success(
-                "Yükleme başarılı bir şekilde gerçekleştirilmiştir.",
+              // eslint-disable-next-line default-case
+              switch (snapshot.state) {
+                case "paused":
+                  //  console.log("Upload is paused");
+                  break;
+                case "running":
+                  //console.log("Upload is running");
+                  break;
+              }
+            },
+            (error) => {
+              reject(error, "error");
+              toast.warning(
+                "Yükleme sırasında bir sorunla karşılaştık tekrar deneyiniz",
                 {
                   position: "top-left",
-                  autoClose: 1200,
+                  autoClose: false,
                   className: "mt-20",
                   hideProgressBar: false,
                   closeOnClick: true,
@@ -111,41 +98,59 @@ const VideoForm = () => {
                   theme: "light",
                 }
               );
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                toast.success(
+                  "Yükleme başarılı bir şekilde gerçekleştirilmiştir.",
+                  {
+                    position: "top-left",
+                    autoClose: 1200,
+                    className: "mt-20",
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  }
+                );
 
-              resolve(downloadURL);
-            });
-          }
-        );
+                resolve(downloadURL);
+              });
+            }
+          );
+        });
+      };
+      const updateVideoUrl = await Promise.all(
+        [...data.video].map((avatar) => storeImage(avatar))
+      ).catch((error) => {
+        console.log(error);
+        setUploaded(false);
       });
-    };
-    const updateVideoUrl = await Promise.all(
-      [...data.video].map((avatar) => storeImage(avatar))
-    ).catch((error) => {
-      console.log(error);
-      setUploaded(false);
-    });
-    if (updateVideoUrl) {
-      setUploaded(true);
-    }
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log(" succesfully added data! ");
-        const dataObject = {
-          title: data.title,
-          companyName: data.companyName,
-          explanation: data.explanation,
-          platform: data.platform,
-          accountName: data.accountName,
-          userId: userId || user.uid,
-          videoUrl: updateVideoUrl,
-          listId: randomId,
-          videoFileName: data?.videoName,
-        };
-
-        await setDoc(doc(db, "videoList", randomId), dataObject);
+      if (updateVideoUrl) {
+        setUploaded(true);
       }
-      // Set loading state to false after initial check
-    });
+
+      const dataObject = {
+        title: data.title,
+        companyName: data.companyName,
+        explanation: data.explanation,
+        platform: data.platform,
+        accountName: data.accountName,
+        userId: userId,
+        videoUrl: updateVideoUrl,
+        listId: randomId,
+        videoFileName: data?.videoName,
+      };
+
+      dispatch(setListings(dataObject));
+      await setDoc(doc(db, `videoList`, randomId), dataObject);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // Set loading state to false after initial check
 
     // Perform any necessary actions with the form data
     reset();

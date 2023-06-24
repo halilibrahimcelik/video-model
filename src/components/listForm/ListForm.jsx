@@ -15,7 +15,6 @@ const ListForm = ({ item }) => {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
-    console.log(data.title);
     if (data.title === item.title && data.explanation === item.explanation) {
       toast.info(
         "Herhangi bir değişiklik yapıldığı zaman güncelleme işlemi gerçekleşir",

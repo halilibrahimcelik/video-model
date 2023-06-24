@@ -13,10 +13,10 @@ const initialState = {
   user: null,
   error: null,
   email: null,
-  userId: storedAuthData
+  userId: null,
+  isLoggedIn: storedAuthData
     ? JSON.parse(localStorage.getItem("isUserLoggedIn"))
     : null,
-  uploaded: false,
 };
 
 // Slice
@@ -27,20 +27,21 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload.displayName;
       state.email = action.payload.email;
-      state.userId = action.payload.uid;
+      state.userId = action.payload.userId;
       state.error = null;
+      state.isLoggedIn = true;
     },
     setError: (state, action) => {
       state.error = action.payload;
       state.user = null;
       state.userId = null;
+      state.isLoggedIn = true;
     },
     signOut: (state) => {
       state.user = null;
       state.error = null;
-    },
-    setUploadFile: (state, action) => {
-      state.uploaded = action.payload.uploaded;
+      state.isLoggedIn = false;
+      state.userId = null;
     },
   },
 });
@@ -89,8 +90,13 @@ export const signIn = (email, password) => async (dispatch) => {
     );
 
     if (userCredential.user) {
+      const userObj = {
+        userId: userCredential.user.uid,
+        email: userCredential.user.email,
+        displayName: userCredential.user.displayName,
+      };
       localStorage.setItem("isLoggedIn", true);
-      dispatch(setUser(userCredential.user));
+      dispatch(setUser(userObj));
       toast.success("Giriş başarılı", {
         position: "top-left",
         autoClose: 2000,
@@ -121,7 +127,12 @@ export const signOut = () => async (dispatch) => {
 export const listenToAuthChanges = () => async (dispatch) => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      dispatch(setUser(user));
+      const userObj = {
+        userId: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+      };
+      dispatch(setUser(userObj));
       localStorage.setItem("isLoggedIn", true);
     }
     // Set loading state to false after initial check
@@ -134,6 +145,6 @@ export const { setUser, setError, setUploadFile } = authSlice.actions;
 export const selectUser = (state) => state.auth.user;
 export const selectUserId = (state) => state.auth.userId;
 export const selectUploaded = (state) => state.auth.uploaded;
-
+export const selectLoggedIn = (state) => state.auth.isLoggedIn;
 // Reducer
 export default authSlice.reducer;
