@@ -48,7 +48,6 @@ const VideoList = () => {
             const querySnapshot = await getDocs(queryRef);
             querySnapshot.forEach((doc) => {
               if (doc.exists()) {
-                console.log(doc.data());
                 return videoList.push(doc.data());
               }
             });
