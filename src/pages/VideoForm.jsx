@@ -138,7 +138,7 @@ const VideoForm = () => {
         explanation: data.explanation,
         platform: data.platform,
         accountName: data.accountName,
-        userId: userId,
+        userId: userId || JSON.stringify(localStorage.getItem("userToken")),
         videoUrl: updateVideoUrl,
         listId: randomId,
         videoFileName: data?.videoName,

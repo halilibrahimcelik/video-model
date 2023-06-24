@@ -6,9 +6,9 @@ import { listenToAuthChanges } from "./app/auth/authSlicer";
 function App() {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(listenToAuthChanges());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(listenToAuthChanges());
+  // }, [dispatch]);
   return <AppRouter />;
 }
 

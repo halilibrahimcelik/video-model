@@ -34,6 +34,7 @@ const VideoList = () => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
+
     onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         console.log(currentUser);
@@ -47,6 +48,7 @@ const VideoList = () => {
             const querySnapshot = await getDocs(queryRef);
             querySnapshot.forEach((doc) => {
               if (doc.exists()) {
+                console.log(doc.data());
                 return videoList.push(doc.data());
               }
             });
@@ -99,6 +101,7 @@ const VideoList = () => {
       </div>
     );
   }
+
   return (
     <>
       <Navbar />

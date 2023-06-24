@@ -37,7 +37,7 @@ const authSlice = createSlice({
       state.userId = null;
       state.isLoggedIn = true;
     },
-    signOut: (state) => {
+    setSignOut: (state) => {
       state.user = null;
       state.error = null;
       state.isLoggedIn = false;
@@ -64,6 +64,7 @@ export const signUp = (email, password, firstName) => async (dispatch) => {
     };
     dispatch(setUser(updatedUser));
     localStorage.setItem("isLoggedIn", true);
+    localStorage.setItem("userToken", userCredential.user.uid);
   } catch (error) {
     dispatch(setError(error.message));
     toast.error(error.message, {
@@ -96,6 +97,8 @@ export const signIn = (email, password) => async (dispatch) => {
         displayName: userCredential.user.displayName,
       };
       localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("userToken", userCredential.user.uid);
+
       dispatch(setUser(userObj));
       toast.success("Giriş başarılı", {
         position: "top-left",
@@ -118,7 +121,9 @@ export const signIn = (email, password) => async (dispatch) => {
 export const signOut = () => async (dispatch) => {
   try {
     await auth.signOut();
-    dispatch(signOut());
+    dispatch(setSignOut());
+
+    localStorage.removeItem("userToken");
   } catch (error) {
     dispatch(setError(error.message));
   }
@@ -139,7 +144,8 @@ export const listenToAuthChanges = () => async (dispatch) => {
   });
 };
 // Actions
-export const { setUser, setError, setUploadFile } = authSlice.actions;
+export const { setUser, setError, setUploadFile, setSignOut } =
+  authSlice.actions;
 
 // Selector
 export const selectUser = (state) => state.auth.user;
